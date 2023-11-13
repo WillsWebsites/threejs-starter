@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import gsap from 'gsap'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -46,7 +47,7 @@ group.add(cube2)
 group.add(cube3)
 
 group.scale.y = 1.3
-group.position.x = -2
+group.position.x = 1
 
 // Axis Helper
 const axesHelper = new THREE.AxesHelper(2)
@@ -69,20 +70,16 @@ renderer.setSize(sizes.width, sizes.height)
 
 const clock = new THREE.Clock()
 
+gsap.to(mesh.position, { x: 2, duration: 1, delay: 3 })
+
 // Animation
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
-  // group.position.x += 0.007
-  // cube3.rotation.y += 0.005
-  cube3.position.y = Math.sin(elapsedTime)
-  cube3.position.x = Math.sin(elapsedTime)
-  // cube3.rotation.z += 0.001
-  // cube2.rotation.y += 0.004
-  // cube2.rotation.y -= 0.008
-  // cube2.rotation.z += 0.007
-  // cube1.rotation.y -= 0.002
-  // cube1.rotation.y -= 0.001
-  // cube1.rotation.z -= 0.004
+
+  camera.position.x = Math.cos(elapsedTime) / 2
+  camera.position.y = Math.sin(elapsedTime) / 2
+  camera.lookAt(cube2.position)
+
   renderer.render(scene, camera)
   window.requestAnimationFrame(tick)
 }
