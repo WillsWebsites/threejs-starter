@@ -1,6 +1,19 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls'
 import gsap from 'gsap'
+import GUI from 'lil-gui'
+
+// Debug
+const gui = new GUI({ width: 300, title: 'Nice Debug UI', closeFolders: true })
+// gui.close()
+// gui.hide()
+
+window.addEventListener('keydown', event => {
+  if (event.key === 'h') gui.show(gui._hidden)
+})
+
+const debugObject = {}
+debugObject.color = '#123aaf'
 
 // Mouse
 const cursor = {
@@ -20,22 +33,52 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Object
-// const geometry = new THREE.BoxGeometry(1, 1, 1)
+const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
 // Custom Object
-const geometry = new THREE.BufferGeometry()
-const count = 500
-const positionsArr = new Float32Array(count * 3 * 3)
+// const geometry = new THREE.BufferGeometry()
+// const count = 500
+// const positionsArr = new Float32Array(count * 3 * 3)
 
-for (let i = 0; i < count * 3 * 3; i++) {
-  positionsArr[i] = (Math.random() - 0.5) * 5
-}
+// for (let i = 0; i < count * 3 * 3; i++) {
+//   positionsArr[i] = (Math.random() - 0.5) * 5
+// }
 
-const positionsAttr = new THREE.BufferAttribute(positionsArr, 3)
-geometry.setAttribute('position', positionsAttr)
+// const positionsAttr = new THREE.BufferAttribute(positionsArr, 3)
+// geometry.setAttribute('position', positionsAttr)
 
-const material = new THREE.MeshBasicMaterial({ color: 'red', wireframe: true })
+const material = new THREE.MeshBasicMaterial({ color: debugObject.color, wireframe: true })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+
+const cubeFolder = gui.addFolder('Awesome Cube')
+cubeFolder.close()
+
+cubeFolder.add(mesh.position, 'y').min(-3).max(3).step(0.001).name('elevation')
+cubeFolder.add(mesh, 'visible')
+cubeFolder.add(material, 'wireframe')
+cubeFolder.addColor(debugObject, 'color').onChange(() => material.color.set(debugObject.color))
+debugObject.spin = () => {
+  gsap.to(mesh.rotation, { y: mesh.rotation.y + Math.PI * 2 })
+}
+cubeFolder.add(debugObject, 'spin')
+
+debugObject.subdivision = 2
+cubeFolder
+  .add(debugObject, 'subdivision')
+  .min(1)
+  .max(20)
+  .step(1)
+  .onFinishChange(() => {
+    mesh.geometry.dispose()
+    mesh.geometry = new THREE.BoxGeometry(
+      1,
+      1,
+      1,
+      debugObject.subdivision,
+      debugObject.subdivision,
+      debugObject.subdivision
+    )
+  })
 
 // const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16)
 // const material = new THREE.MeshBasicMaterial({ color: 'red', wireframe: true })
