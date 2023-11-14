@@ -20,10 +20,27 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 'green' })
+// const geometry = new THREE.BoxGeometry(1, 1, 1)
+// Custom Object
+const geometry = new THREE.BufferGeometry()
+const count = 500
+const positionsArr = new Float32Array(count * 3 * 3)
+
+for (let i = 0; i < count * 3 * 3; i++) {
+  positionsArr[i] = (Math.random() - 0.5) * 5
+}
+
+const positionsAttr = new THREE.BufferAttribute(positionsArr, 3)
+geometry.setAttribute('position', positionsAttr)
+
+const material = new THREE.MeshBasicMaterial({ color: 'red', wireframe: true })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+
+// const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16)
+// const material = new THREE.MeshBasicMaterial({ color: 'red', wireframe: true })
+// const torusKnot = new THREE.Mesh(geometry, material)
+// scene.add(torusKnot)
 
 // Position
 // mesh.position.set(0.7, -0.6, 1)
